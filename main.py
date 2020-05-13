@@ -3,6 +3,7 @@
 # 3 - создать окно игры
 
 import pygame
+import random
 
 # ширина, высота, фпс (частота кадров), основные цвета
 WIDTH = 600
@@ -10,7 +11,7 @@ HEIGHT = 400
 FPS = 60
 
 # цвета задаются по RGB (КЗС) от 0 до 255
-# Черный - 0 цветов
+# Черный - 0 цветов 
 # Белый - все цвета
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
@@ -29,14 +30,14 @@ clock = pygame.time.Clock() # Переменная, которая поможе�
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((40, 40))
+        self.image = pygame.Surface((50, 50))
         self.image.fill(RED)
         self.rect = self.image.get_rect() # Берем прямоугольник, который отвечает за спрайт
         # у rect есть centerx, centery - центр по оси X прямоугльника и центр по оси Y прямоугольника
         # у rect есть left, right, top, bottom - левая граница, правая граница, верхняя граница, нижняя граница
         # у rect есть x, y - координата по оси X и по оси Y
-        self.rect.left = 10
-        self.rect.bottom = HEIGHT - 10
+        self.rect.left = 5
+        self.rect.bottom = HEIGHT - 5
         self.speedy = 0
         self.timer = pygame.time.get_ticks()
         self.jumping = False
@@ -69,7 +70,7 @@ class Player(pygame.sprite.Sprite):
             self.speedy = -10
         if keystate[pygame.K_c] and not self.jumping and not self.down:
             self.image = pygame.Surface((40, 20))
-            self.image.fill(BLUE)
+            self.image.fill(RED)
             old_rect = self.rect
             self.rect = self.image.get_rect()
             self.rect.x = old_rect.x
@@ -80,12 +81,27 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.y += self.speedy
 
+class Suriken(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((25,25))
+        self.image.fill(WHITE)
+        self.rect = self.image.get_rect()
+        self.rect.right = 600
+        self.rect.top = random.randint(18,400)
+        self.speedx = -5
+
+    def update(self):
+        self.speedx = -10
+        self.speedy = 0
 
 # игровой цикл
 
 # Создать группы спрайтов, чтобы работать с ними со всеми одновременно
 all_sprites = pygame.sprite.Group()
 player = Player() # создаем переменную player класса Player
+suriken = Suriken()
+all_sprites.add(suriken)
 all_sprites.add(player) # добавляем игрока в группу всех спрайтов
 
 running = True
