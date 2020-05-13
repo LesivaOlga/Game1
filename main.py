@@ -39,12 +39,13 @@ class Player(pygame.sprite.Sprite):
         self.rect.left = 5
         self.rect.bottom = HEIGHT - 5
         self.speedy = 0
+        self.speedx = 2
         self.timer = pygame.time.get_ticks()
         self.jumping = False
         self.down = False
 
     def update(self):
-        if pygame.time.get_ticks() - self.timer >= 250:
+        if pygame.time.get_ticks() - self.timer >= 500:
             if self.jumping:
                 if self.speedy < 0:
                     self.speedy = -self.speedy
@@ -58,16 +59,18 @@ class Player(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect()
                 self.rect.x = old_rect.x
                 self.rect.y = old_rect.y - 20
-
                 self.down = False
-
             self.timer = pygame.time.get_ticks()
-
+        self.rect.x += self.speedx
+        if (self.rect.left > WIDTH):
+            self.rect.left = 5
+            self.rect.bottom = HEIGHT - 5
+              
         keystate = pygame.key.get_pressed()
         if keystate[pygame.K_SPACE] and not self.jumping and not self.down:
             self.jumping = True
             self.timer = pygame.time.get_ticks()
-            self.speedy = -10
+            self.speedy = -8
         if keystate[pygame.K_c] and not self.jumping and not self.down:
             self.image = pygame.Surface((40, 20))
             self.image.fill(RED)
@@ -88,21 +91,29 @@ class Suriken(pygame.sprite.Sprite):
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
         self.rect.right = 600
-        self.rect.top = random.randint(18,400)
-        self.speedx = -5
+        self.rect.centery = random.randint(250, 350)
+        self.rect.centerx = WIDTH + random.randint(100, 1000)
+        self.speedx = -3
 
     def update(self):
-        self.speedx = -10
-        self.speedy = 0
+        if (self.rect.right < 0):
+            self.rect.centery = random.randint(250, 350)
+            self.rect.centerx = WIDTH + random.randint(100, 1000)
+        self.rect.x += self.speedx
 
 # игровой цикл
 
 # Создать группы спрайтов, чтобы работать с ними со всеми одновременно
 all_sprites = pygame.sprite.Group()
+all_surikens = pygame.sprite.Group()
+
 player = Player() # создаем переменную player класса Player
-suriken = Suriken()
-all_sprites.add(suriken)
 all_sprites.add(player) # добавляем игрока в группу всех спрайтов
+
+for i in range (0, 7):
+    suriken = Suriken()
+    all_surikens.add(suriken)
+    all_sprites.add(suriken)
 
 running = True
 while running:
@@ -122,3 +133,13 @@ while running:
     pygame.display.flip() # обновление экран (отображение нового кадра)
 
 pygame.quit() 
+
+# TODO: исправить подпрыгивание при первом приседании игрока
+# done: увеличить время прыжка игрока
+# TODO: добавить жизни игрока
+# TODO: уменьшать жизни игрока при столкновении с сюрикеном
+# TODO: добавить изображения к спрайтам
+
+# git add *
+# git commit
+# git push
